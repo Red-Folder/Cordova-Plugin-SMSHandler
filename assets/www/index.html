@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<!--
+/*
+ * Copyright 2012 Red Folder Consultancy Ltd
+ *   
+ * Licensed under the Apache License, Version 2.0 (the "License");   
+ * you may not use this file except in compliance with the License.   
+ * You may obtain a copy of the License at       
+ * 
+ * 	http://www.apache.org/licenses/LICENSE-2.0   
+ *
+ * Unless required by applicable law or agreed to in writing, software   
+ * distributed under the License is distributed on an "AS IS" BASIS,   
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   
+ * See the License for the specific language governing permissions and   
+ * limitations under the License.
+ */
+-->
+<html>
+	<head>
+		<title>SMS Handler</title>
+		
+		<script type="text/javascript" charset="utf-8" src="cordova-2.4.0.js"></script>
+		<script type="text/javascript" src="smsHandler.js"></script>
+		
+	</head>
+	
+	<body>
+		<h1>SMS Handler</h1>
+		
+		<h2>Rules List</h2>
+		<input id='AddRules' type=button onclick='deleteAllRules();' value='Add Rules'>
+		<div id="RulesList">
+			None
+		</div>
+		
+		<h2>Unread Messages</h2>
+		<input id='GetUnread' type=button onclick='getUnread();' value='Get Unread'>
+		<input id='MarkAllRead' type=button onclick='markAllRead();' value='Mark all read'>
+		<div id="MessageList">
+			None
+		</div>
+		
+		<script type="text/javascript" >
+		
+			/*
+			 * Initialization
+			 */
+        	var divRulesList = document.getElementById('RulesList');
+        	var divMessageList = document.getElementById('MessageList');
+        	
+        	
+        	// Create an instance of plugin
+        	var handler = cordova.require('cordova/plugin/smsHandler');
+        	
+        	getRules();
+        	getUnread();
+        	
+        	function handleError(data) {
+				alert("Error: " + JSON.stringify(data));
+ 			}
+ 			
+ 			function getRules() {
+ 				handler.getAllRules(	function(r){displayRules(r)},
+ 										function(e){handleError(e)});
+ 			}
+ 			
+ 			function getUnread() {
+ 				handler.getAllUnreadMessages(	function(r){displayMessages(r)},
+ 												function(e){handleError(e)});
+ 			}
+
+ 			function markAllRead() {
+ 				handler.markAllMessagesAsRead(	function(r){displayMessages(r)},
+ 												function(e){handleError(e)});
+ 			}
+ 			
+ 			function displayRules(data) {
+ 				//alert(JSON.stringify(data));
+ 				var html = "None";
+ 				
+ 				if (data.Rules != null ) {
+ 					if (data.Rules.length > 0) {
+ 						html = data.Rules.length + " rules found <br/>";
+ 						for (var counter in data.Rules) {
+ 							var rule = data.Rules[counter];
+ 							//alert(JSON.stringify(rule));
+ 							html += 'Origin: ' + rule.Origin + ', Message Body: ' + rule.MessageBody + '<br/>';
+ 						}
+ 					}
+ 				}
+ 				
+ 				divRulesList.innerHTML = html;
+ 				
+ 			}
+ 			
+ 			function deleteAllRules() {
+ 				handler.deleteAllRules(	function(r) {addRules()},
+ 										function(e) {handleError(e)} );
+ 			}
+ 			
+ 			function addRules() {
+ 				var rules = {	Rules: [
+ 										{ Origin: '1234567890', MessageBody: 'test' }, 
+ 										{ Origin: '1111111111', MessageBody: '' }, 
+ 										{ Origin: '', MessageBody: 'hello' }
+ 								] };
+ 								
+ 				//alert(JSON.stringify(rules));
+
+ 				handler.addRules(	rules,
+ 									function(r){getRules()},
+ 									function(e){handleError(e)});
+ 				 
+ 			}
+
+ 			function displayMessages(data) {
+ 				//alert(JSON.stringify(data));
+ 				var html = "None";
+ 				
+ 				if (data.Messages != null) {
+ 					if (data.Messages.length > 0) {
+ 						html = data.Messages.length + " messages found <br/>";
+ 						for (var counter in data.Messages) {
+ 							var message = data.Messages[counter];
+ 							//alert(JSON.stringify(message));
+ 							html += 'Origin: ' + message.Origin + ', Message Body: ' + message.MessageBody + '<br/>';
+ 						}
+ 					}
+ 				}
+ 				
+ 				divMessageList.innerHTML = html;
+ 				
+ 			}
+ 			
+ 			
+		</script>
+	</body>
+</html>
