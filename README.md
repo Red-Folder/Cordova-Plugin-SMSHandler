@@ -16,17 +16,23 @@ The plugin allows you to define rules.  It will then monitor incoming SMS messag
 1) Copy the contents from the Github respository into your project
 
 2) Add the following to AndroidManifest.xml - within the <manifest> node:
+```xml
 	<uses-permission android:name="android.permission.RECEIVE_SMS"></uses-permission>
+```
 
 3) Add the following to AndroidManifest.xml - within the <application> node:
+```xml
 	<receiver android:name="com.red_folder.phonegap.plugin.smshandler.SMSReceiver"> 
 		<intent-filter android:priority="999"> 
 			<action android:name="android.provider.Telephony.SMS_RECEIVED"  /> 
 		</intent-filter> 
 	</receiver> 
+```
 
 4) Add the following to res/xml/config.xml - within the <plugins> node:
+```xml
 	<plugin name="SMSHandlerPlugin" value="com.red_folder.phonegap.plugin.smshandler.SMSHandlerPlugin" />
+```
 
 
 ## Further information ##
